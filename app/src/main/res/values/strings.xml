@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">CFcompose</string>
+
+    <string name="start">Calculate your tax id</string>
+    <string name="surname">Surname</string>
+    <string name="name">Name</string>
+    <string name="date">Date</string>
+    <string name="sex">Sex</string>
+    <string name="city">City</string>
+    <string name="recap">Info</string>
+
+    <string name="go">go</string>
+    <string name="back">back</string>
+
+    <string name="placeholderSurname">Insert your surname</string>
+    <string name="placeholderName">Insert your name</string>
+
+
+</resources>
