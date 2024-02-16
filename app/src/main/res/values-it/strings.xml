@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CFcompose</string>
+    <string name="start">Calcola il tuo codice fiscale</string>
+    <string name="surname">Cognome</string>
+    <string name="name">Nome</string>
+    <string name="date">Data</string>
+    <string name="sex">Sesso</string>
+    <string name="city">Città</string>
+    <string name="recap">Info</string>
+    <string name="go">vai</string>
+    <string name="back">indietro</string>
+    <string name="placeholderSurname">Inserisci cognome</string>
+    <string name="placeholderName">Inserisci nome</string>
+    <string name="placeholderCf">Il tuo codice fiscale</string>
+    <string name="placeholderMen">Uomo</string>
+    <string name="placeholderWomen">Donna</string>
+</resources>

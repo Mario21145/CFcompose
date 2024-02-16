@@ -1,4 +1,4 @@
-package com.example.cfcompose.Data
+package com.example.cfcompose.data
 
 import java.util.Locale
 
@@ -19,6 +19,25 @@ object Data {
             )
         }
     }
+
+    val months: List<String> by lazy {
+        if (language == "it") {
+          listOf(
+                "Gennaio", "Febbraio", "Marzo", "Aprile",
+                "Maggio", "Giugno", "Luglio", "Agosto",
+                "Settembre", "Ottobre", "Novembre", "Dicembre", "mese"
+            )
+        } else {
+            listOf(
+                "January", "February", "March", "April",
+                "May", "June", "July", "August",
+                "September", "October", "November", "December", "month"
+            )
+        }
+    }
+
+
+
 
     val consonants = listOf(
         'B',
@@ -74,6 +93,8 @@ object Data {
         'S' to 18, 'T' to 19, 'U' to 20, 'V' to 21, 'W' to 22, 'X' to 23,
         'Y' to 24, 'Z' to 25
     )
+
+
 
 
 

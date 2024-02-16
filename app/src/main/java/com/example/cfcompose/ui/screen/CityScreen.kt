@@ -1,7 +1,5 @@
 package com.example.cfcompose.ui.screen
 
-import android.util.Log
-import android.widget.CalendarView
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,10 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cfcompose.Data.Data
-import com.example.cfcompose.R
+import com.example.cfcompose.data.Data
 import com.example.cfcompose.ui.screen.commonElements.ButtonSection
-import com.example.cfcompose.ui.screen.commonElements.LiveCfSection
 import com.example.cfcompose.ui.theme.CFcomposeTheme
 
 
