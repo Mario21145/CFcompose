@@ -52,17 +52,14 @@ fun NameScreen(
     onClick: () -> Unit,
     onValueChanged: (String) -> Unit,
     CF: String,
+    enabled : Boolean
 ) {
-
     LiveCfSection(modifier, CF)
-
     InsertNameSection(
         modifier = Modifier,
         onValueChanged = onValueChanged
     )
-
-    ButtonSection(modifier, onClick)
-
+    ButtonSection(modifier, onClick , enabled)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,7 +112,7 @@ fun InsertNameSection(
 @Composable
 fun NameScreenPreview() {
     CFcomposeTheme {
-        NameScreen(Modifier, {}, {}, "xxx")
+        NameScreen(Modifier, {}, {}, "xxx" , true)
     }
 }
 

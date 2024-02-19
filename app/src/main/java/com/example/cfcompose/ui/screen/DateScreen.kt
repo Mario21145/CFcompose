@@ -40,7 +40,8 @@ fun DateScreen(
     modifier: Modifier = Modifier,
     onClick : () -> Unit,
     onCalendarClick: (Int , Int , Int) -> Unit,
-    CF : String
+    CF : String,
+    enabled : Boolean
 ) {
 
     LiveCfSection(modifier , CF)
@@ -52,7 +53,7 @@ fun DateScreen(
         modifier = Modifier,
         onCalendarClick,
     )
-    ButtonSection(modifier, onClick)
+    ButtonSection(modifier, onClick , enabled)
 
 }
 
@@ -109,7 +110,7 @@ fun InsertDateSection(
 @Composable
 fun DateScreenPreview() {
     CFcomposeTheme {
-        DateScreen(Modifier, {} , { _, _, _ -> } , "xxx")
+        DateScreen(Modifier, {} , { _, _, _ -> } , "xxx" , true)
     }
 }
 

@@ -19,6 +19,7 @@
 
 
     <string name="placeholderCf">Your tax id</string>
+    <string name="placeholderCity">Choose a city\n</string>
 
 
 </resources>

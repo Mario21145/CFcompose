@@ -36,12 +36,13 @@ import com.example.cfcompose.ui.theme.CFcomposeTheme
 fun SexScreen(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    onRadioClicked: () -> Unit,
+    onRadioClicked: (Boolean , Boolean) -> Unit,
     CF: String,
 ) {
 
     LiveCfSection(modifier , CF)
     InsertSexSection(
+        onRadioClicked =  onRadioClicked,
         modifier = Modifier,
     )
     ButtonSection(modifier, onClick)
@@ -51,8 +52,10 @@ fun SexScreen(
 
 @Composable
 fun InsertSexSection(
+    onRadioClicked: (Boolean , Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
     var isMenSelected by remember { mutableStateOf(false) }
     var isWomenSelected by remember { mutableStateOf(false) }
 
@@ -73,6 +76,7 @@ fun InsertSexSection(
                     if(!isWomenSelected){
                         isMenSelected = !isMenSelected
                     }
+                    onRadioClicked(isMenSelected , isWomenSelected)
                 },
                 colors = RadioButtonDefaults.colors(
                     selectedColor = MaterialTheme.colorScheme.primary,
@@ -85,6 +89,7 @@ fun InsertSexSection(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
             )
+
         }
 
         Spacer(
@@ -99,16 +104,16 @@ fun InsertSexSection(
             RadioButton(
                 selected = isWomenSelected,
                 onClick = {
-
                     if(!isMenSelected){
                         isWomenSelected = !isWomenSelected
                     }
-
+                    onRadioClicked(isMenSelected , isWomenSelected)
                 },
                 colors = RadioButtonDefaults.colors(
                     selectedColor = MaterialTheme.colorScheme.primary,
                     unselectedColor = MaterialTheme.colorScheme.onBackground,
                 )
+
             )
 
             Text(
@@ -125,7 +130,7 @@ fun InsertSexSection(
 @Composable
 fun SexScreenPreview() {
     CFcomposeTheme {
-        SexScreen(Modifier, {} , {} , "xxx")
+//        SexScreen(Modifier, {} , {} , "xxx")
     }
 }
 

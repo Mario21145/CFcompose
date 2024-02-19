@@ -43,7 +43,7 @@ fun LiveCfSection(
         Card(
             modifier = modifier
                 .padding(20.dp)
-                .width(300.dp),
+                .width(370.dp),
             colors = CardDefaults.cardColors(
                 contentColor = MaterialTheme.colorScheme.primary
             )

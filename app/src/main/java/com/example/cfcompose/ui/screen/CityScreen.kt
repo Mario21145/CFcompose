@@ -11,36 +11,46 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.cfcompose.R
 import com.example.cfcompose.data.Data
 import com.example.cfcompose.ui.screen.commonElements.ButtonSection
+import com.example.cfcompose.ui.screen.commonElements.LiveCfSection
 import com.example.cfcompose.ui.theme.CFcomposeTheme
 
 
 @Composable
 fun CityScreen(
     modifier: Modifier = Modifier,
-    onClickPositive: () -> Unit,
+    onClick: () -> Unit,
+    onDropDownClicked: (String) -> Unit,
+    CF: String
 ) {
 
-//    LiveCfSection()
+    LiveCfSection(modifier, CF)
     InsertCitySection(
         modifier = Modifier,
+        onDropDownClicked = onDropDownClicked
     )
-    ButtonSection(modifier, onClickPositive)
+    ButtonSection(modifier, onClick)
 
 }
 
@@ -48,6 +58,7 @@ fun CityScreen(
 @Composable
 fun InsertCitySection(
     modifier: Modifier = Modifier,
+    onDropDownClicked: (String) -> Unit,
 ) {
     val expanded = remember { mutableStateOf(false) }
     val selectedCity = remember { mutableStateOf(Data.cities.first()) }
@@ -59,13 +70,14 @@ fun InsertCitySection(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             Text(
-                text = "Select Month",
+                text = "Select City",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable {
@@ -95,6 +107,7 @@ fun InsertCitySection(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             selectedCity.value = entry
+                            onDropDownClicked(selectedCity.value)
                             expanded.value = false
                         },
                         text = {
@@ -113,7 +126,10 @@ fun InsertCitySection(
 
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
 
-        Text(text = selectedCity.value)
+        Text(
+            text = selectedCity.value,
+        )
+
     }
 }
 
@@ -121,7 +137,7 @@ fun InsertCitySection(
 @Composable
 fun CityScreenPreview() {
     CFcomposeTheme {
-        CityScreen(Modifier, {})
+        CityScreen(Modifier, {}, {}, "xxx")
     }
 }
 

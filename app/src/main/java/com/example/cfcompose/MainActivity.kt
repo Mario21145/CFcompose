@@ -42,6 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cfcompose.ui.screen.CityScreen
 import com.example.cfcompose.ui.screen.DateScreen
 import com.example.cfcompose.ui.screen.NameScreen
+import com.example.cfcompose.ui.screen.RecapScreen
 import com.example.cfcompose.ui.screen.SexScreen
 import com.example.cfcompose.ui.screen.StartScreen
 import com.example.cfcompose.ui.screen.SurnameScreen
@@ -127,7 +128,7 @@ fun CityApp(
                 canNavigateBack = canNavigateBack,
                 navigateUp = {
 
-                    when(currentScreen){
+                    when (currentScreen) {
 
                         CfScreen.Surname -> {
                             viewModel.updateCF(0..2)
@@ -183,110 +184,161 @@ fun CityApp(
                 )
             }
 
+
             composable(route = CfScreen.Surname.name) {
-                var upperNewValue by remember { mutableStateOf(mutableListOf<Char>()) }
+
                 var part by remember { mutableStateOf("") }
+                var buttonEnabled by remember { mutableStateOf(false) }
+
                 SurnameScreen(
                     onClick = {
                         checkDestinations(navController, currentScreen)
                         viewModel.setCF(part.takeLast(3))
                     },
                     onValueChanged = { newValue ->
-                        upperNewValue.clear()
-                        upperNewValue.addAll(newValue.map { it.uppercaseChar() })
-
-                        if (upperNewValue.isEmpty()) {
-                            viewModel.updateCF(0..2)
-                        } else {
-                            part = viewModel.calcConsonants(upperNewValue)
-                        }
+                        buttonEnabled = newValue.isNotBlank()
+                        part = viewModel.calcSurname(newValue)
                     },
-                    CF = part
+                    CF = part,
+                    enabled = buttonEnabled
                 )
-                Log.d("MainScreen" , "Livecf: ${uiState.liveCf}")
+                Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
+                Log.d(
+                    "MainScreen",
+                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city}"
+                )
             }
 
 
             composable(route = CfScreen.Name.name) {
-                var upperNewValue by remember { mutableStateOf(mutableListOf<Char>()) }
+
                 var part by remember { mutableStateOf("") }
+                var buttonEnabled by remember { mutableStateOf(false) }
+
+
                 NameScreen(
                     onClick = {
                         checkDestinations(navController, currentScreen)
-                        viewModel.setCF(part.takeLast(3))
+                        viewModel.setCF(part)
                     },
                     onValueChanged = { newValue ->
-                        upperNewValue.clear()
-                        upperNewValue.addAll(newValue.map { it.uppercaseChar() })
-                        Log.d("MainScreen" , "UppperValue: ${upperNewValue}")
-
-                        if (upperNewValue.toString().isEmpty()) {
-                            viewModel.updateCF(3..5)
-                        } else {
-                           part = viewModel.calcConsonants(upperNewValue)
-                        }
+                        buttonEnabled = newValue.isNotBlank()
+                        part = viewModel.calcName(newValue)
                     },
-                    CF = uiState.liveCf + part
+                    CF = uiState.liveCf + part,
+                    enabled = buttonEnabled
                 )
-                Log.d("MainScreen" , "Livecf: ${uiState.liveCf}")
+                Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
+                Log.d(
+                    "MainScreen",
+                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city}"
+                )
+
             }
 
 
 
             composable(route = CfScreen.Date.name) {
 
-                var upperNewValue by remember { mutableStateOf(mutableListOf<Char>()) }
                 var part by remember { mutableStateOf("") }
+                var buttonEnabled by remember { mutableStateOf(false) }
 
                 DateScreen(
-                    onClick ={
+                    onClick = {
                         viewModel.setCF(part)
-                        checkDestinations(navController , currentScreen)
-                             },
-                    onCalendarClick = { year , month , day ->
-                        val yearResult = viewModel.calcYear(year.toString())
-                        val monthResult = viewModel.calcMonth(month)
-                        val dayResult = viewModel.calcDay(day.toString())
-
-                        part = yearResult + monthResult + dayResult
+                        checkDestinations(navController, currentScreen)
                     },
-                    CF = uiState.liveCf + part
+                    onCalendarClick = { year, month, day ->
+                        buttonEnabled = part.isNotEmpty()
+                        part = viewModel.calcDate(year, month, day)
+                    },
+                    CF = uiState.liveCf + part,
+                    enabled = buttonEnabled
                 )
+                Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
+                Log.d(
+                    "MainScreen",
+                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city}"
+                )
+
             }
 
             composable(route = CfScreen.Sex.name) {
+
+                var part by remember { mutableStateOf("") }
+                var buttonEnabled by remember { mutableStateOf(false) }
+
+
                 SexScreen(
                     onClick = {
+                        viewModel.setCF(part)
                         checkDestinations(navController, currentScreen)
                     },
-                    onRadioClicked = {
-
+                    onRadioClicked = { isMenSelected, isWomenSelected ->
+                        if(uiState.stateSex == 1){
+                            buttonEnabled = false
+                        }
+                        part = viewModel.calcSex(isMenSelected, isWomenSelected)
                     },
-                    CF = uiState.liveCf
+                    CF = uiState.liveCf + part
                 )
+
+                Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
+                Log.d(
+                    "MainScreen",
+                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city}"
+                )
+
             }
 
             composable(route = CfScreen.City.name) {
+
+                var part by remember { mutableStateOf("") }
+
                 CityScreen(
-                    onClickPositive = { checkDestinations(navController, currentScreen) }
+                    onClick = {
+                        viewModel.setCF(part)
+                        checkDestinations(navController, currentScreen)
+                    },
+                    onDropDownClicked = { city ->
+                        part = viewModel.calcCity(city)
+                        viewModel.setCity(city)
+                    },
+                    CF = uiState.liveCf + part
+                )
+
+                Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
+                Log.d(
+                    "MainScreen",
+                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city}"
                 )
             }
 
             composable(route = CfScreen.Recap.name) {
 
-            }
+                val lastLetter = viewModel.calcLastLetter(uiState.liveCf)
 
+                RecapScreen(
+                    name = uiState.name,
+                    surname = uiState.surname,
+                    sex = uiState.sex,
+                    year = uiState.year,
+                    city = uiState.city,
+                    month = uiState.month,
+                    liveCf = uiState.liveCf + lastLetter,
+                    day = uiState.day,
+                    onClick = {
+                        checkDestinations(navController, currentScreen)
+                        viewModel.clearAll()
+                    }
+                )
+
+            }
         }
     }
 
 }
 
-/*
-
-State = true on navigation
-State = flase on back navigation
-
- */
 fun checkDestinations(navController: NavHostController, currentScreen: CfScreen) {
     when (currentScreen) {
         CfScreen.Start -> {
@@ -323,7 +375,7 @@ fun checkDestinations(navController: NavHostController, currentScreen: CfScreen)
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun GreetingPreview() {
+fun AppPreview() {
     CFcomposeTheme {
         CityApp()
     }
