@@ -31,6 +31,7 @@ import com.example.cfcompose.ui.utils.CfScreen
 fun ButtonSection(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    enabled : Boolean
 ) {
 
     Column(
@@ -52,7 +53,8 @@ fun ButtonSection(
                     .weight(1f)
                     .padding(10.dp)
                 ,
-                onClick = onClick
+                onClick = onClick,
+                enabled = enabled,
             ) {
                 Text(
                     text = stringResource(R.string.go),
@@ -72,5 +74,5 @@ fun ButtonSection(
 @Preview(showSystemUi = true)
 @Composable
 fun ButtonSectionPreview() {
-    ButtonSection(Modifier, {})
+    ButtonSection(Modifier, {} , true)
 }

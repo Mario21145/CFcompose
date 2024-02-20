@@ -45,6 +45,7 @@ fun SurnameScreen(
     onClick: () -> Unit,
     onValueChanged: (String) -> Unit,
     CF : String,
+    enabled : Boolean
 ) {
     LiveCfSection(modifier , CF)
 
@@ -53,7 +54,7 @@ fun SurnameScreen(
         onValueChanged = onValueChanged
     )
 
-    ButtonSection(modifier, onClick)
+    ButtonSection(modifier, onClick , enabled)
 
 }
 
@@ -104,7 +105,7 @@ fun InsertSurnameSection(
 @Composable
 fun SurnameScreenPreview() {
     CFcomposeTheme {
-        SurnameScreen(Modifier, {} , {} , "xxx")
+        SurnameScreen(Modifier, {} , {} , "xxx" , false)
     }
 }
 

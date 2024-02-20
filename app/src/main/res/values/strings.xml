@@ -14,6 +14,12 @@
 
     <string name="placeholderSurname">Insert your surname</string>
     <string name="placeholderName">Insert your name</string>
+    <string name="placeholderMen">Men</string>
+    <string name="placeholderWomen">Women</string>
+
+
+    <string name="placeholderCf">Your tax id</string>
+    <string name="placeholderCity">Choose a city\n</string>
 
 
 </resources>
