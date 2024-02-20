@@ -1,11 +1,9 @@
 package com.example.cfcompose.ui.viewmodel
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
+import com.example.cfcompose.R
 import com.example.cfcompose.data.CfUiState
 import com.example.cfcompose.data.Data
 import com.example.cfcompose.data.Data.months
@@ -268,8 +266,16 @@ class CfViewModel : ViewModel() {
                 convertedLiveCf[i] = ' '
             }
             convertedLiveCf.removeAll { it == ' ' }
-            _uiState.value.liveCf = convertedLiveCf.joinToString("")
+
+            _uiState.update { currentState ->
+                currentState.copy(
+                    liveCf = convertedLiveCf.joinToString("")
+                )
+            }
+
+//            _uiState.value.liveCf = convertedLiveCf.joinToString("")
         }
+
     }
 
     fun calcConsonants(name: List<Char>): String {
@@ -405,5 +411,17 @@ class CfViewModel : ViewModel() {
         return ""
     }
 
+    fun checkDayFinal() : Int{
 
+        if(_uiState.value.day.isNotEmpty()){
+            if(_uiState.value.stateSex == 0) {
+                return _uiState.value.day.toInt().minus(40)
+            } else {
+                return _uiState.value.day.toInt()
+            }
+        }
+        return 0
+
+    }
+    
 }

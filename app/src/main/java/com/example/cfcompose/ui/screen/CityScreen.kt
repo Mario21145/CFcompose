@@ -42,7 +42,8 @@ fun CityScreen(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     onDropDownClicked: (String) -> Unit,
-    CF: String
+    CF: String,
+    enabled: Boolean,
 ) {
 
     LiveCfSection(modifier, CF)
@@ -50,7 +51,7 @@ fun CityScreen(
         modifier = Modifier,
         onDropDownClicked = onDropDownClicked
     )
-    ButtonSection(modifier, onClick)
+    ButtonSection(modifier, onClick , enabled)
 
 }
 
@@ -137,7 +138,7 @@ fun InsertCitySection(
 @Composable
 fun CityScreenPreview() {
     CFcomposeTheme {
-        CityScreen(Modifier, {}, {}, "xxx")
+        CityScreen(Modifier, {}, {}, "xxx" , true)
     }
 }
 

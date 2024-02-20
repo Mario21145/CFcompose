@@ -38,6 +38,7 @@ fun SexScreen(
     onClick: () -> Unit,
     onRadioClicked: (Boolean , Boolean) -> Unit,
     CF: String,
+    enabled : Boolean
 ) {
 
     LiveCfSection(modifier , CF)
@@ -45,7 +46,7 @@ fun SexScreen(
         onRadioClicked =  onRadioClicked,
         modifier = Modifier,
     )
-    ButtonSection(modifier, onClick)
+    ButtonSection(modifier, onClick , enabled)
 
 }
 

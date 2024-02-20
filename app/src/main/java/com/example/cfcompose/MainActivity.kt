@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -74,14 +75,14 @@ fun CfAppBar(
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CfViewModel = viewModel(),
 ) {
-
-//    val uiState by viewModel.uiState.collectAsState()
 
     CenterAlignedTopAppBar(
         title = {
-            Text(stringResource(currentScreen.title))
+            Text(
+                text = stringResource(currentScreen.title),
+                fontWeight = FontWeight.Bold
+            )
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -93,7 +94,6 @@ fun CfAppBar(
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = null
-                        //stringResource(R.string.back_button)
                     )
                 }
             }
@@ -131,35 +131,33 @@ fun CityApp(
                     when (currentScreen) {
 
                         CfScreen.Surname -> {
-                            viewModel.updateCF(0..2)
+
                             navController.navigateUp()
                         }
 
                         CfScreen.Name -> {
-                            viewModel.updateCF(3..5)
+                            viewModel.updateCF(0..2)
                             navController.navigateUp()
                         }
 
                         CfScreen.Date -> {
-                            viewModel.updateCF(6..10)
+                            viewModel.updateCF(3..5)
                             navController.navigateUp()
                         }
 
                         CfScreen.Sex -> {
-//                            viewModel.updateCF(0..2)
+                            viewModel.updateCF(6..10)
                             navController.navigateUp()
                         }
 
                         CfScreen.City -> {
-//                            viewModel.updateCF(0..2)
                             navController.navigateUp()
                         }
 
                         CfScreen.Recap -> {
-//                            viewModel.updateCF(0..2)
+                            viewModel.updateCF(11..14)
                             navController.navigateUp()
                         }
-
 
                         else -> {}
                     }
@@ -192,12 +190,12 @@ fun CityApp(
 
                 SurnameScreen(
                     onClick = {
-                        checkDestinations(navController, currentScreen)
                         viewModel.setCF(part.takeLast(3))
+                        checkDestinations(navController, currentScreen)
                     },
                     onValueChanged = { newValue ->
-                        buttonEnabled = newValue.isNotBlank()
                         part = viewModel.calcSurname(newValue)
+                        buttonEnabled = part.isNotBlank()
                     },
                     CF = part,
                     enabled = buttonEnabled
@@ -249,12 +247,13 @@ fun CityApp(
                         checkDestinations(navController, currentScreen)
                     },
                     onCalendarClick = { year, month, day ->
-                        buttonEnabled = part.isNotEmpty()
                         part = viewModel.calcDate(year, month, day)
+                        buttonEnabled = part.isNotEmpty()
                     },
                     CF = uiState.liveCf + part,
                     enabled = buttonEnabled
                 )
+
                 Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
                 Log.d(
                     "MainScreen",
@@ -268,19 +267,17 @@ fun CityApp(
                 var part by remember { mutableStateOf("") }
                 var buttonEnabled by remember { mutableStateOf(false) }
 
-
                 SexScreen(
                     onClick = {
                         viewModel.setCF(part)
                         checkDestinations(navController, currentScreen)
                     },
                     onRadioClicked = { isMenSelected, isWomenSelected ->
-                        if(uiState.stateSex == 1){
-                            buttonEnabled = false
-                        }
+                        buttonEnabled = isMenSelected || isWomenSelected
                         part = viewModel.calcSex(isMenSelected, isWomenSelected)
                     },
-                    CF = uiState.liveCf + part
+                    CF = uiState.liveCf + part,
+                    enabled = buttonEnabled
                 )
 
                 Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
@@ -294,6 +291,7 @@ fun CityApp(
             composable(route = CfScreen.City.name) {
 
                 var part by remember { mutableStateOf("") }
+                var buttonEnabled by remember { mutableStateOf(false) }
 
                 CityScreen(
                     onClick = {
@@ -302,9 +300,11 @@ fun CityApp(
                     },
                     onDropDownClicked = { city ->
                         part = viewModel.calcCity(city)
+                        buttonEnabled = part.isNotBlank()
                         viewModel.setCity(city)
                     },
-                    CF = uiState.liveCf + part
+                    CF = uiState.liveCf + part,
+                    enabled = buttonEnabled
                 )
 
                 Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
@@ -317,6 +317,7 @@ fun CityApp(
             composable(route = CfScreen.Recap.name) {
 
                 val lastLetter = viewModel.calcLastLetter(uiState.liveCf)
+                val checkedDay = viewModel.checkDayFinal().toString()
 
                 RecapScreen(
                     name = uiState.name,
@@ -326,10 +327,10 @@ fun CityApp(
                     city = uiState.city,
                     month = uiState.month,
                     liveCf = uiState.liveCf + lastLetter,
-                    day = uiState.day,
+                    day = checkedDay,
                     onClick = {
-                        checkDestinations(navController, currentScreen)
                         viewModel.clearAll()
+                        checkDestinations(navController, currentScreen)
                     }
                 )
 

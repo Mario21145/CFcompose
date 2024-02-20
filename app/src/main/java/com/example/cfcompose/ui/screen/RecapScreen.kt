@@ -56,7 +56,7 @@ fun RecapScreen(
         month,
         liveCf,
     )
-    ButtonSection(modifier, onClick)
+    ButtonSection(modifier, onClick , true)
 
 }
 
