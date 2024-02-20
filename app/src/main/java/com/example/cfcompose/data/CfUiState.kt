@@ -13,6 +13,7 @@ data class CfUiState (
 
     var sex : String = "",
     var stateSex : Int = 0,
+    var stateStep : Boolean = false,
 
     var city : String = ""
 

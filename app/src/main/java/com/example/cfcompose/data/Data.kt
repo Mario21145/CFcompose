@@ -1,5 +1,7 @@
 package com.example.cfcompose.data
 
+import com.example.cfcompose.R
+import com.example.cfcompose.model.StepModel
 import java.util.Locale
 
 object Data {
@@ -11,18 +13,30 @@ object Data {
     val cities: List<String> by lazy {
         if (language == "it") {
             listOf(
-                "Scegli una città" , "cardito", "afragola", "frattamaggiore", "aversa", "napoli", "acerra"
+                "Scegli una città",
+                "cardito",
+                "afragola",
+                "frattamaggiore",
+                "aversa",
+                "napoli",
+                "acerra"
             )
         } else {
             listOf(
-                "Choose a city" , "cardito", "afragola", "frattamaggiore", "aversa", "napoli", "acerra"
+                "Choose a city",
+                "cardito",
+                "afragola",
+                "frattamaggiore",
+                "aversa",
+                "napoli",
+                "acerra"
             )
         }
     }
 
     val months: List<String> by lazy {
         if (language == "it") {
-          listOf(
+            listOf(
                 "Gennaio", "Febbraio", "Marzo", "Aprile",
                 "Maggio", "Giugno", "Luglio", "Agosto",
                 "Settembre", "Ottobre", "Novembre", "Dicembre", "mese"
@@ -35,8 +49,6 @@ object Data {
             )
         }
     }
-
-
 
 
     val consonants = listOf(
@@ -94,8 +106,15 @@ object Data {
         'Y' to 24, 'Z' to 25
     )
 
-
-
+    fun getScreensData(): List<StepModel> {
+        return listOf(
+            StepModel(R.string.surname , false),
+            StepModel(R.string.date , false),
+            StepModel(R.string.sex , false),
+            StepModel(R.string.city , false),
+            StepModel(R.string.recap , false),
+        )
+    }
 
 
 }

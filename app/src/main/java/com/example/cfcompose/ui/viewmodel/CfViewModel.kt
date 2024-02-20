@@ -1,12 +1,11 @@
 package com.example.cfcompose.ui.viewmodel
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
-import com.example.cfcompose.R
+import androidx.navigation.NavHostController
 import com.example.cfcompose.data.CfUiState
 import com.example.cfcompose.data.Data
 import com.example.cfcompose.data.Data.months
+import com.example.cfcompose.ui.utils.CfScreen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -91,6 +90,15 @@ class CfViewModel : ViewModel() {
                 sex = "",
                 stateSex = 0,
                 city = ""
+            )
+        }
+    }
+
+
+    fun setStateSteps(value: Boolean, currentScreen: CfScreen) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                stateStep = value
             )
         }
     }
@@ -411,10 +419,10 @@ class CfViewModel : ViewModel() {
         return ""
     }
 
-    fun checkDayFinal() : Int{
+    fun checkDayFinal(): Int {
 
-        if(_uiState.value.day.isNotEmpty()){
-            if(_uiState.value.stateSex == 0) {
+        if (_uiState.value.day.isNotEmpty()) {
+            if (_uiState.value.stateSex == 0) {
                 return _uiState.value.day.toInt().minus(40)
             } else {
                 return _uiState.value.day.toInt()
@@ -423,5 +431,40 @@ class CfViewModel : ViewModel() {
         return 0
 
     }
-    
+
+
+    fun checkDestinations(navController: NavHostController, currentScreen: CfScreen) {
+        when (currentScreen) {
+            CfScreen.Start -> {
+                navController.navigate(CfScreen.Surname.name)
+            }
+
+            CfScreen.Surname -> {
+                navController.navigate(CfScreen.Name.name)
+            }
+
+            CfScreen.Name -> {
+                navController.navigate(CfScreen.Date.name)
+            }
+
+            CfScreen.Date -> {
+                navController.navigate(CfScreen.Sex.name)
+            }
+
+            CfScreen.Sex -> {
+                navController.navigate(CfScreen.City.name)
+            }
+
+            CfScreen.City -> {
+                navController.navigate(CfScreen.Recap.name)
+            }
+
+            CfScreen.Recap -> {
+                navController.navigate(CfScreen.Start.name)
+            }
+
+        }
+    }
+
+
 }

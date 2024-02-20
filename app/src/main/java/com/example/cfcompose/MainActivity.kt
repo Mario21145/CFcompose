@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -17,50 +19,51 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.cfcompose.ui.theme.CFcomposeTheme
-import com.example.cfcompose.ui.utils.CfScreen
-import com.example.cfcompose.ui.viewmodel.CfViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cfcompose.ui.screen.CityScreen
 import com.example.cfcompose.ui.screen.DateScreen
 import com.example.cfcompose.ui.screen.NameScreen
 import com.example.cfcompose.ui.screen.RecapScreen
 import com.example.cfcompose.ui.screen.SexScreen
 import com.example.cfcompose.ui.screen.StartScreen
+import com.example.cfcompose.ui.screen.StepsScreen
 import com.example.cfcompose.ui.screen.SurnameScreen
-import kotlinx.coroutines.delay
+import com.example.cfcompose.ui.theme.CFcomposeTheme
+import com.example.cfcompose.ui.utils.CfScreen
+import com.example.cfcompose.ui.utils.Windows
+import com.example.cfcompose.ui.viewmodel.CfViewModel
 
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             CFcomposeTheme {
-                // A surface container using the 'background' color from the theme
+                val windowSize = calculateWindowSizeClass(this)
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CityApp()
+                    CityApp(windowSize.widthSizeClass)
                 }
             }
         }
@@ -105,23 +108,90 @@ fun CfAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CityApp(
-    viewModel: CfViewModel = viewModel(),
+    windowSize: WindowWidthSizeClass,
     navController: NavHostController = rememberNavController(),
-) {
+
+    ) {
+
     val backStackEntry by navController.currentBackStackEntryAsState()
     var currentScreen = CfScreen.valueOf(
         backStackEntry?.destination?.route ?: CfScreen.Start.name
     )
 
-    val uiState by viewModel.uiState.collectAsState()
+    var contentType: Windows
 
+    when (windowSize) {
+        WindowWidthSizeClass.Compact -> {
+            contentType = Windows.Screen
+        }
+
+        WindowWidthSizeClass.Medium -> {
+            contentType = Windows.Screen
+        }
+
+        WindowWidthSizeClass.Expanded -> {
+            contentType = Windows.ScreenAndSteps
+        }
+
+        else -> {
+            contentType = Windows.Screen
+        }
+    }
+
+    if (contentType == Windows.ScreenAndSteps) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+
+            Column(
+                modifier = Modifier
+                    .weight(1f),
+            ) {
+                StepsScreen(currentScreen)
+            }
+
+            Column(
+                modifier = Modifier
+                    .weight(3f)
+            ) {
+                Screens(windowSize, contentType)
+            }
+
+        }
+
+    }
+
+    if (contentType != Windows.ScreenAndSteps) {
+        Screens(windowSize, contentType)
+    }
+
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Screens(
+    windowSize: WindowWidthSizeClass,
+    contentType: Windows,
+    viewModel: CfViewModel = viewModel(),
+    navController: NavHostController = rememberNavController(),
+) {
+
+    val backStackEntry by navController.currentBackStackEntryAsState()
     var canNavigateBack = false
+    var currentScreen = CfScreen.valueOf(
+        backStackEntry?.destination?.route ?: CfScreen.Start.name
+    )
+
     if (currentScreen != CfScreen.Start) {
         canNavigateBack = true
     }
 
-    Scaffold(
+    val uiState by viewModel.uiState.collectAsState()
 
+
+    Scaffold(
         topBar = {
             CfAppBar(
                 currentScreen = currentScreen,
@@ -190,8 +260,11 @@ fun CityApp(
 
                 SurnameScreen(
                     onClick = {
+                        if (contentType == Windows.ScreenAndSteps) {
+                            viewModel.setStateSteps(buttonEnabled , currentScreen)
+                        }
                         viewModel.setCF(part.takeLast(3))
-                        checkDestinations(navController, currentScreen)
+                        viewModel.checkDestinations(navController, currentScreen)
                     },
                     onValueChanged = { newValue ->
                         part = viewModel.calcSurname(newValue)
@@ -216,7 +289,7 @@ fun CityApp(
 
                 NameScreen(
                     onClick = {
-                        checkDestinations(navController, currentScreen)
+                        viewModel.checkDestinations(navController, currentScreen)
                         viewModel.setCF(part)
                     },
                     onValueChanged = { newValue ->
@@ -229,7 +302,7 @@ fun CityApp(
                 Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
                 Log.d(
                     "MainScreen",
-                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city}"
+                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city} "
                 )
 
             }
@@ -244,7 +317,7 @@ fun CityApp(
                 DateScreen(
                     onClick = {
                         viewModel.setCF(part)
-                        checkDestinations(navController, currentScreen)
+                        viewModel.checkDestinations(navController, currentScreen)
                     },
                     onCalendarClick = { year, month, day ->
                         part = viewModel.calcDate(year, month, day)
@@ -257,7 +330,7 @@ fun CityApp(
                 Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
                 Log.d(
                     "MainScreen",
-                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city}"
+                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city} "
                 )
 
             }
@@ -270,7 +343,7 @@ fun CityApp(
                 SexScreen(
                     onClick = {
                         viewModel.setCF(part)
-                        checkDestinations(navController, currentScreen)
+                        viewModel.checkDestinations(navController, currentScreen)
                     },
                     onRadioClicked = { isMenSelected, isWomenSelected ->
                         buttonEnabled = isMenSelected || isWomenSelected
@@ -283,7 +356,7 @@ fun CityApp(
                 Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
                 Log.d(
                     "MainScreen",
-                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city}"
+                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city} "
                 )
 
             }
@@ -296,7 +369,7 @@ fun CityApp(
                 CityScreen(
                     onClick = {
                         viewModel.setCF(part)
-                        checkDestinations(navController, currentScreen)
+                        viewModel.checkDestinations(navController, currentScreen)
                     },
                     onDropDownClicked = { city ->
                         part = viewModel.calcCity(city)
@@ -330,55 +403,26 @@ fun CityApp(
                     day = checkedDay,
                     onClick = {
                         viewModel.clearAll()
-                        checkDestinations(navController, currentScreen)
+                        viewModel.checkDestinations(navController, currentScreen)
                     }
                 )
 
             }
         }
-    }
+
+
+    } //
+
 
 }
 
-fun checkDestinations(navController: NavHostController, currentScreen: CfScreen) {
-    when (currentScreen) {
-        CfScreen.Start -> {
-            navController.navigate(CfScreen.Surname.name)
-        }
 
-        CfScreen.Surname -> {
-            navController.navigate(CfScreen.Name.name)
-        }
-
-        CfScreen.Name -> {
-            navController.navigate(CfScreen.Date.name)
-        }
-
-        CfScreen.Date -> {
-            navController.navigate(CfScreen.Sex.name)
-        }
-
-        CfScreen.Sex -> {
-            navController.navigate(CfScreen.City.name)
-        }
-
-        CfScreen.City -> {
-            navController.navigate(CfScreen.Recap.name)
-        }
-
-        CfScreen.Recap -> {
-            navController.navigate(CfScreen.Start.name)
-        }
-
-    }
-}
-
-
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AppPreview() {
     CFcomposeTheme {
-        CityApp()
+//        CityApp(windowSize.widthSizeClass)
     }
 }
 
