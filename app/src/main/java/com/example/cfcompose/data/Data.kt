@@ -1,14 +1,11 @@
 package com.example.cfcompose.data
 
-import com.example.cfcompose.R
-import com.example.cfcompose.model.StepModel
 import java.util.Locale
 
 object Data {
 
 
     val language = Locale.getDefault().language
-
 
     val cities: List<String> by lazy {
         if (language == "it") {
@@ -105,16 +102,5 @@ object Data {
         'S' to 18, 'T' to 19, 'U' to 20, 'V' to 21, 'W' to 22, 'X' to 23,
         'Y' to 24, 'Z' to 25
     )
-
-    fun getScreensData(): List<StepModel> {
-        return listOf(
-            StepModel(R.string.surname , false),
-            StepModel(R.string.date , false),
-            StepModel(R.string.sex , false),
-            StepModel(R.string.city , false),
-            StepModel(R.string.recap , false),
-        )
-    }
-
 
 }

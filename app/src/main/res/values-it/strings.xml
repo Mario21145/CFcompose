@@ -15,4 +15,11 @@
     <string name="placeholderCf">Il tuo codice fiscale</string>
     <string name="placeholderMen">Uomo</string>
     <string name="placeholderWomen">Donna</string>
+    <string name="placeholderCity">Scegli una città</string>
+    <string name="what_u_will_need">Di cosa avrai bisogno?</string>
+    <string name="nameHome">Nome</string>
+    <string name="surnameHome">Cognome</string>
+    <string name="your_birthday">La tua data di nascita</string>
+    <string name="your_sex">Il tuo sesso</string>
+    <string name="place_where_u_born">Posto dove sei nato</string>
 </resources>

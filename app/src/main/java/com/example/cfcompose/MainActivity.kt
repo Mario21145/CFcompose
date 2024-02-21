@@ -38,6 +38,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.cfcompose.data.CfUiState
 import com.example.cfcompose.ui.screen.CityScreen
 import com.example.cfcompose.ui.screen.DateScreen
 import com.example.cfcompose.ui.screen.NameScreen
@@ -109,14 +110,10 @@ fun CfAppBar(
 @Composable
 fun CityApp(
     windowSize: WindowWidthSizeClass,
-    navController: NavHostController = rememberNavController(),
+    viewModel: CfViewModel = viewModel(),
+) {
 
-    ) {
-
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    var currentScreen = CfScreen.valueOf(
-        backStackEntry?.destination?.route ?: CfScreen.Start.name
-    )
+    val uiState by viewModel.uiState.collectAsState()
 
     var contentType: Windows
 
@@ -139,23 +136,22 @@ fun CityApp(
     }
 
     if (contentType == Windows.ScreenAndSteps) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
+
+
+        Row() {
 
             Column(
                 modifier = Modifier
                     .weight(1f),
             ) {
-                StepsScreen(currentScreen)
+                StepsScreen(uiState)
             }
 
             Column(
                 modifier = Modifier
-                    .weight(3f)
+                    .weight(4f)
             ) {
-                Screens(windowSize, contentType)
+                Screens( contentType , uiState = uiState)
             }
 
         }
@@ -163,7 +159,7 @@ fun CityApp(
     }
 
     if (contentType != Windows.ScreenAndSteps) {
-        Screens(windowSize, contentType)
+        Screens( contentType , uiState = uiState)
     }
 
 
@@ -172,10 +168,10 @@ fun CityApp(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Screens(
-    windowSize: WindowWidthSizeClass,
     contentType: Windows,
     viewModel: CfViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
+    uiState: CfUiState,
 ) {
 
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -188,9 +184,6 @@ fun Screens(
         canNavigateBack = true
     }
 
-    val uiState by viewModel.uiState.collectAsState()
-
-
     Scaffold(
         topBar = {
             CfAppBar(
@@ -198,34 +191,59 @@ fun Screens(
                 canNavigateBack = canNavigateBack,
                 navigateUp = {
 
+                    Log.d("CurrentScreen" , "$currentScreen")
                     when (currentScreen) {
 
                         CfScreen.Surname -> {
-
+                            if(contentType == Windows.ScreenAndSteps){
+                                viewModel.updateStateSteps(currentScreen)
+                            }
                             navController.navigateUp()
                         }
 
                         CfScreen.Name -> {
                             viewModel.updateCF(0..2)
+                            viewModel.setSurname("")
+                            if(contentType == Windows.ScreenAndSteps){
+                                viewModel.updateStateSteps(currentScreen)
+                            }
                             navController.navigateUp()
                         }
 
                         CfScreen.Date -> {
                             viewModel.updateCF(3..5)
+                            viewModel.setName("")
+                            if(contentType == Windows.ScreenAndSteps){
+                                viewModel.updateStateSteps(currentScreen)
+                            }
                             navController.navigateUp()
                         }
 
                         CfScreen.Sex -> {
                             viewModel.updateCF(6..10)
+                            viewModel.setMonth("")
+                            viewModel.setYear("")
+                            viewModel.setDay("")
+                            if(contentType == Windows.ScreenAndSteps){
+                                viewModel.updateStateSteps(currentScreen)
+                            }
                             navController.navigateUp()
                         }
 
                         CfScreen.City -> {
+                            viewModel.setSex("")
+                            if(contentType == Windows.ScreenAndSteps){
+                                viewModel.updateStateSteps(currentScreen)
+                            }
                             navController.navigateUp()
                         }
 
                         CfScreen.Recap -> {
+                            viewModel.setCity("")
                             viewModel.updateCF(11..14)
+                            if(contentType == Windows.ScreenAndSteps){
+                                viewModel.updateStateSteps(currentScreen)
+                            }
                             navController.navigateUp()
                         }
 
@@ -236,6 +254,11 @@ fun Screens(
         }
 
     ) { innerPadding ->
+
+
+
+
+
 
         NavHost(
             navController = navController,
@@ -252,7 +275,6 @@ fun Screens(
                 )
             }
 
-
             composable(route = CfScreen.Surname.name) {
 
                 var part by remember { mutableStateOf("") }
@@ -260,24 +282,27 @@ fun Screens(
 
                 SurnameScreen(
                     onClick = {
-                        if (contentType == Windows.ScreenAndSteps) {
-                            viewModel.setStateSteps(buttonEnabled , currentScreen)
-                        }
                         viewModel.setCF(part.takeLast(3))
                         viewModel.checkDestinations(navController, currentScreen)
                     },
                     onValueChanged = { newValue ->
                         part = viewModel.calcSurname(newValue)
                         buttonEnabled = part.isNotBlank()
+                        if (contentType == Windows.ScreenAndSteps) {
+                            viewModel.setStateSteps(buttonEnabled , currentScreen)
+                        }
                     },
                     CF = part,
                     enabled = buttonEnabled
                 )
                 Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
-                Log.d(
-                    "MainScreen",
-                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city}"
-                )
+                Log.d("MainScreen", "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city}")
+                Log.d("MainScreen", "stateStepSurname: ${uiState.stateStepSurname}")
+                Log.d("MainScreen", "stateStepName: ${uiState.stateStepName}")
+                Log.d("MainScreen", "stateStepDate: ${uiState.stateStepDate}")
+                Log.d("MainScreen", "stateStepSex: ${uiState.stateStepSex}")
+                Log.d("MainScreen", "stateStepCity: ${uiState.stateStepCity}")
+                Log.d("MainScreen", "stateStepRecap: ${uiState.stateStepRecap}")
             }
 
 
@@ -295,19 +320,23 @@ fun Screens(
                     onValueChanged = { newValue ->
                         buttonEnabled = newValue.isNotBlank()
                         part = viewModel.calcName(newValue)
+                        if (contentType == Windows.ScreenAndSteps) {
+                            viewModel.setStateSteps(buttonEnabled , currentScreen)
+                        }
                     },
                     CF = uiState.liveCf + part,
                     enabled = buttonEnabled
                 )
                 Log.d("MainScreen", "Livecf: ${uiState.liveCf}")
-                Log.d(
-                    "MainScreen",
-                    "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city} "
-                )
+                Log.d("MainScreen", "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city} ")
+                Log.d("MainScreen", "stateStepSurname: ${uiState.stateStepSurname}")
+                Log.d("MainScreen", "stateStepName: ${uiState.stateStepName}")
+                Log.d("MainScreen", "stateStepDate: ${uiState.stateStepDate}")
+                Log.d("MainScreen", "stateStepSex: ${uiState.stateStepSex}")
+                Log.d("MainScreen", "stateStepCity: ${uiState.stateStepCity}")
+                Log.d("MainScreen", "stateStepRecap: ${uiState.stateStepRecap}")
 
             }
-
-
 
             composable(route = CfScreen.Date.name) {
 
@@ -322,6 +351,9 @@ fun Screens(
                     onCalendarClick = { year, month, day ->
                         part = viewModel.calcDate(year, month, day)
                         buttonEnabled = part.isNotEmpty()
+                        if (contentType == Windows.ScreenAndSteps) {
+                            viewModel.setStateSteps(buttonEnabled , currentScreen)
+                        }
                     },
                     CF = uiState.liveCf + part,
                     enabled = buttonEnabled
@@ -332,6 +364,12 @@ fun Screens(
                     "MainScreen",
                     "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city} "
                 )
+                Log.d("MainScreen", "stateStepSurname: ${uiState.stateStepSurname}")
+                Log.d("MainScreen", "stateStepName: ${uiState.stateStepName}")
+                Log.d("MainScreen", "stateStepDate: ${uiState.stateStepDate}")
+                Log.d("MainScreen", "stateStepSex: ${uiState.stateStepSex}")
+                Log.d("MainScreen", "stateStepCity: ${uiState.stateStepCity}")
+                Log.d("MainScreen", "stateStepRecap: ${uiState.stateStepRecap}")
 
             }
 
@@ -348,6 +386,9 @@ fun Screens(
                     onRadioClicked = { isMenSelected, isWomenSelected ->
                         buttonEnabled = isMenSelected || isWomenSelected
                         part = viewModel.calcSex(isMenSelected, isWomenSelected)
+                        if (contentType == Windows.ScreenAndSteps) {
+                            viewModel.setStateSteps(buttonEnabled , currentScreen)
+                        }
                     },
                     CF = uiState.liveCf + part,
                     enabled = buttonEnabled
@@ -358,6 +399,12 @@ fun Screens(
                     "MainScreen",
                     "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city} "
                 )
+                Log.d("MainScreen", "stateStepSurname: ${uiState.stateStepSurname}")
+                Log.d("MainScreen", "stateStepName: ${uiState.stateStepName}")
+                Log.d("MainScreen", "stateStepDate: ${uiState.stateStepDate}")
+                Log.d("MainScreen", "stateStepSex: ${uiState.stateStepSex}")
+                Log.d("MainScreen", "stateStepCity: ${uiState.stateStepCity}")
+                Log.d("MainScreen", "stateStepRecap: ${uiState.stateStepRecap}")
 
             }
 
@@ -374,6 +421,9 @@ fun Screens(
                     onDropDownClicked = { city ->
                         part = viewModel.calcCity(city)
                         buttonEnabled = part.isNotBlank()
+                        if (contentType == Windows.ScreenAndSteps) {
+                            viewModel.setStateSteps(buttonEnabled , currentScreen)
+                        }
                         viewModel.setCity(city)
                     },
                     CF = uiState.liveCf + part,
@@ -385,6 +435,12 @@ fun Screens(
                     "MainScreen",
                     "Data stored in ui state: surname: ${uiState.surname}, name: ${uiState.name}, year: ${uiState.year}, month: ${uiState.month}, day: ${uiState.day}, sex: ${uiState.sex}, city: ${uiState.city}"
                 )
+                Log.d("MainScreen", "stateStepSurname: ${uiState.stateStepSurname}")
+                Log.d("MainScreen", "stateStepName: ${uiState.stateStepName}")
+                Log.d("MainScreen", "stateStepDate: ${uiState.stateStepDate}")
+                Log.d("MainScreen", "stateStepSex: ${uiState.stateStepSex}")
+                Log.d("MainScreen", "stateStepCity: ${uiState.stateStepCity}")
+                Log.d("MainScreen", "stateStepRecap: ${uiState.stateStepRecap}")
             }
 
             composable(route = CfScreen.Recap.name) {
@@ -410,8 +466,7 @@ fun Screens(
             }
         }
 
-
-    } //
+    }
 
 
 }

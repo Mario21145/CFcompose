@@ -20,6 +20,12 @@
 
     <string name="placeholderCf">Your tax id</string>
     <string name="placeholderCity">Choose a city\n</string>
+    <string name="what_u_will_need">What you will need?</string>
+    <string name="nameHome">Name</string>
+    <string name="surnameHome">Surname</string>
+    <string name="your_birthday">Your birthday</string>
+    <string name="your_sex">Your sex</string>
+    <string name="place_where_u_born">Place where you born</string>
 
 
 </resources>

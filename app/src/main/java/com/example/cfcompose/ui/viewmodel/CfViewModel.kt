@@ -89,17 +89,127 @@ class CfViewModel : ViewModel() {
                 day = "",
                 sex = "",
                 stateSex = 0,
-                city = ""
+                city = "",
+                stateStepSurname = false,
+                stateStepName = false,
+                stateStepSex = false,
+                stateStepDate = false,
+                stateStepCity = false,
+                stateStepRecap = false,
             )
         }
     }
 
 
     fun setStateSteps(value: Boolean, currentScreen: CfScreen) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                stateStep = value
-            )
+
+        when (currentScreen) {
+
+            CfScreen.Surname -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepSurname = value
+                    )
+                }
+            }
+
+            CfScreen.Name -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepName = value
+                    )
+                }
+            }
+
+            CfScreen.Date -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepDate = value
+                    )
+                }
+            }
+
+            CfScreen.Sex -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepSex = value
+                    )
+                }
+            }
+
+            CfScreen.City -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepCity = value
+                    )
+                }
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepRecap = value
+                    )
+                }
+            }
+
+
+
+            else -> {}
+        }
+    }
+
+    fun updateStateSteps(currentScreen: CfScreen) {
+
+        when (currentScreen) {
+
+            CfScreen.Surname -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepSurname = false
+                    )
+                }
+            }
+
+            CfScreen.Name -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepSurname = false
+                    )
+                }
+            }
+
+            CfScreen.Date -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepName = false
+                    )
+                }
+            }
+
+            CfScreen.Sex -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepDate = false
+                    )
+                }
+            }
+
+            CfScreen.City -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepSex = false
+                    )
+                }
+            }
+
+            CfScreen.Recap -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepCity = false,
+                        stateStepRecap = false,
+                    )
+                }
+            }
+
+            else -> {}
         }
     }
 
