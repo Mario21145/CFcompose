@@ -10,7 +10,6 @@ data class CfUiState (
     var month : String = "",
     var day  : String = "",
 
-
     var sex : String = "",
     var stateSex : Int = 0,
 

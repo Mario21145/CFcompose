@@ -18,7 +18,6 @@ class CfViewModel : ViewModel() {
 
     val data = Data
 
-
     fun setSurname(surname: String) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -77,7 +76,6 @@ class CfViewModel : ViewModel() {
         }
     }
 
-
     fun clearAll() {
         _uiState.update { currentState ->
             currentState.copy(
@@ -100,15 +98,14 @@ class CfViewModel : ViewModel() {
         }
     }
 
-
-    fun setStateSteps(value: Boolean, currentScreen: CfScreen) {
+/////
+    fun setStateSteps(value: Boolean, currentScreen: CfScreen, isBack: Boolean) {
 
         when (currentScreen) {
-
             CfScreen.Surname -> {
                 _uiState.update { currentState ->
                     currentState.copy(
-                        stateStepSurname = value
+                        stateStepSurname = if (!isBack) value else false
                     )
                 }
             }
@@ -116,7 +113,8 @@ class CfViewModel : ViewModel() {
             CfScreen.Name -> {
                 _uiState.update { currentState ->
                     currentState.copy(
-                        stateStepName = value
+                        stateStepName = value,
+                        stateStepSurname = !isBack
                     )
                 }
             }
@@ -124,7 +122,8 @@ class CfViewModel : ViewModel() {
             CfScreen.Date -> {
                 _uiState.update { currentState ->
                     currentState.copy(
-                        stateStepDate = value
+                        stateStepDate = value,
+                        stateStepName = !isBack
                     )
                 }
             }
@@ -132,7 +131,8 @@ class CfViewModel : ViewModel() {
             CfScreen.Sex -> {
                 _uiState.update { currentState ->
                     currentState.copy(
-                        stateStepSex = value
+                        stateStepSex = value,
+                        stateStepDate = !isBack
                     )
                 }
             }
@@ -140,62 +140,13 @@ class CfViewModel : ViewModel() {
             CfScreen.City -> {
                 _uiState.update { currentState ->
                     currentState.copy(
-                        stateStepCity = value
+                        stateStepCity = value,
+                        stateStepSex = !isBack
                     )
                 }
                 _uiState.update { currentState ->
                     currentState.copy(
-                        stateStepRecap = value
-                    )
-                }
-            }
-
-
-
-            else -> {}
-        }
-    }
-
-    fun updateStateSteps(currentScreen: CfScreen) {
-
-        when (currentScreen) {
-
-            CfScreen.Surname -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        stateStepSurname = false
-                    )
-                }
-            }
-
-            CfScreen.Name -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        stateStepSurname = false
-                    )
-                }
-            }
-
-            CfScreen.Date -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        stateStepName = false
-                    )
-                }
-            }
-
-            CfScreen.Sex -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        stateStepDate = false
-                    )
-                }
-            }
-
-            CfScreen.City -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        stateStepSex = false
+                        stateStepRecap = value,
                     )
                 }
             }
@@ -203,8 +154,8 @@ class CfViewModel : ViewModel() {
             CfScreen.Recap -> {
                 _uiState.update { currentState ->
                     currentState.copy(
-                        stateStepCity = false,
-                        stateStepRecap = false,
+                        stateStepCity = !isBack,
+                        stateStepRecap = false
                     )
                 }
             }
@@ -212,7 +163,6 @@ class CfViewModel : ViewModel() {
             else -> {}
         }
     }
-
 
     fun calcSurname(newValue: String): String {
         var upperNewValue = mutableListOf<Char>()
