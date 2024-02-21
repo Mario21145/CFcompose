@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CFcompose</string>
+    <string name="app_name">Calcolatore CF</string>
     <string name="start">Calcola il tuo codice fiscale</string>
     <string name="surname">Cognome</string>
     <string name="name">Nome</string>

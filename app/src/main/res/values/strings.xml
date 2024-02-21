@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CFcompose</string>
+    <string name="app_name">Calculator CF</string>
 
     <string name="start">Calculate your tax id</string>
     <string name="surname">Surname</string>
