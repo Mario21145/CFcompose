@@ -8,15 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.cfcompose.ui.theme.CFcomposeTheme
-
-
-var windowSize : WindowSizeClass = TODO()
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -25,7 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CFcomposeTheme {
 
-                windowSize = calculateWindowSizeClass(this)
+                val windowSize = calculateWindowSizeClass(this)
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -38,14 +32,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun AppPreview() {
-    CFcomposeTheme {
-        CityApp(windowSize.widthSizeClass)
-    }
-}
 
 
 

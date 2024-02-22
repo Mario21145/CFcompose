@@ -1,6 +1,6 @@
 package com.example.cfcompose.ui.utils
 
-    enum class Windows {
+    enum class WindowsUtils {
         Screen,
         ScreenAndSteps
     }

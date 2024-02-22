@@ -12,12 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import com.example.cfcompose.ui.utils.CfScreen
+import com.example.cfcompose.ui.utils.CfScreenUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CfAppBar(
-    currentScreen: CfScreen,
+    currentScreen: CfScreenUtils,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,

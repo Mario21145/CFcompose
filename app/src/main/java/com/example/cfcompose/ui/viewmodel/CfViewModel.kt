@@ -1,11 +1,13 @@
 package com.example.cfcompose.ui.viewmodel
 
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.example.cfcompose.data.CfUiState
 import com.example.cfcompose.data.Data
 import com.example.cfcompose.data.Data.months
-import com.example.cfcompose.ui.utils.CfScreen
+import com.example.cfcompose.ui.utils.CfScreenUtils
+import com.example.cfcompose.ui.utils.WindowsUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +19,9 @@ class CfViewModel : ViewModel() {
     val uiState: StateFlow<CfUiState> = _uiState.asStateFlow()
 
     val data = Data
+
+
+    //Setter functions
 
     fun setSurname(surname: String) {
         _uiState.update { currentState ->
@@ -76,6 +81,74 @@ class CfViewModel : ViewModel() {
         }
     }
 
+
+    fun setStateSteps(value: Boolean, currentScreen: CfScreenUtils, isBack: Boolean) {
+
+        when (currentScreen) {
+            CfScreenUtils.Surname -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepSurname = if (!isBack) value else false
+                    )
+                }
+            }
+
+            CfScreenUtils.Name -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepName = value,
+                        stateStepSurname = !isBack
+                    )
+                }
+            }
+
+            CfScreenUtils.Date -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepDate = value,
+                        stateStepName = !isBack
+                    )
+                }
+            }
+
+            CfScreenUtils.Sex -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepSex = value,
+                        stateStepDate = !isBack
+                    )
+                }
+            }
+
+            CfScreenUtils.City -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepCity = value,
+                        stateStepSex = !isBack
+                    )
+                }
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepRecap = value,
+                    )
+                }
+            }
+
+            CfScreenUtils.Recap -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        stateStepCity = !isBack,
+                        stateStepRecap = false
+                    )
+                }
+            }
+
+            else -> {}
+        }
+    }
+
+
+    //Clear function (Clear all the variables)
     fun clearAll() {
         _uiState.update { currentState ->
             currentState.copy(
@@ -98,73 +171,7 @@ class CfViewModel : ViewModel() {
         }
     }
 
-/////
-    fun setStateSteps(value: Boolean, currentScreen: CfScreen, isBack: Boolean) {
-
-        when (currentScreen) {
-            CfScreen.Surname -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        stateStepSurname = if (!isBack) value else false
-                    )
-                }
-            }
-
-            CfScreen.Name -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        stateStepName = value,
-                        stateStepSurname = !isBack
-                    )
-                }
-            }
-
-            CfScreen.Date -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        stateStepDate = value,
-                        stateStepName = !isBack
-                    )
-                }
-            }
-
-            CfScreen.Sex -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        stateStepSex = value,
-                        stateStepDate = !isBack
-                    )
-                }
-            }
-
-            CfScreen.City -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        stateStepCity = value,
-                        stateStepSex = !isBack
-                    )
-                }
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        stateStepRecap = value,
-                    )
-                }
-            }
-
-            CfScreen.Recap -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        stateStepCity = !isBack,
-                        stateStepRecap = false
-                    )
-                }
-            }
-
-            else -> {}
-        }
-    }
-
-    fun calcSurname(newValue: String): String {
+    fun calcSurnameName(newValue: String, isOpposite: Boolean): String {
         var upperNewValue = mutableListOf<Char>()
         var part = ""
 
@@ -172,26 +179,19 @@ class CfViewModel : ViewModel() {
         upperNewValue.addAll(newValue.map { it.uppercaseChar() })
 
         if (upperNewValue.isNotEmpty()) {
-            setSurname(newValue)
+            when (isOpposite) {
+                true -> {
+                    setName(newValue)
+                }
+
+                false -> {
+                    setSurname(newValue)
+                }
+            }
             part = calcConsonants(upperNewValue)
         }
         return part
     }
-
-    fun calcName(newValue: String): String {
-        var upperNewValue = mutableListOf<Char>()
-        var part = ""
-
-        upperNewValue.clear()
-        upperNewValue.addAll(newValue.map { it.uppercaseChar() })
-
-        if (upperNewValue.isNotEmpty()) {
-            setName(newValue)
-            part = calcConsonants(upperNewValue)
-        }
-        return part
-    }
-
 
     fun calcDate(year: Int, month: Int, day: Int): String {
 
@@ -274,42 +274,7 @@ class CfViewModel : ViewModel() {
     }
 
 
-    fun calcCity(city: String): String {
-        when (city) {
-            data.cities[0] -> {
-                return ""
-            }
-
-            data.cities[1] -> {
-                return "B759"
-            }
-
-            data.cities[2] -> {
-                return "A064"
-            }
-
-            data.cities[3] -> {
-                return "D789"
-            }
-
-            data.cities[4] -> {
-                return "A512"
-            }
-
-            data.cities[5] -> {
-                return "F839"
-            }
-
-            data.cities[6] -> {
-                return "A024"
-            }
-
-            else -> {}
-        }
-        return ""
-    }
-
-
+    //CF functions
     fun setCF(part: String) {
         if (_uiState.value.liveCf == "") {
             _uiState.update { currentState ->
@@ -340,13 +305,13 @@ class CfViewModel : ViewModel() {
                     liveCf = convertedLiveCf.joinToString("")
                 )
             }
-
-//            _uiState.value.liveCf = convertedLiveCf.joinToString("")
         }
 
     }
 
-    fun calcConsonants(name: List<Char>): String {
+
+    //Calc functions
+    private fun calcConsonants(name: List<Char>): String {
         var char_result = mutableListOf<Char>()
         val c = mutableListOf<Char>()
         val v = mutableListOf<Char>()
@@ -479,52 +444,175 @@ class CfViewModel : ViewModel() {
         return ""
     }
 
+    fun calcCity(city: String): String {
+        when (city) {
+            data.cities[0] -> {
+                return ""
+            }
+
+            data.cities[1] -> {
+                return "B759"
+            }
+
+            data.cities[2] -> {
+                return "A064"
+            }
+
+            data.cities[3] -> {
+                return "D789"
+            }
+
+            data.cities[4] -> {
+                return "A512"
+            }
+
+            data.cities[5] -> {
+                return "F839"
+            }
+
+            data.cities[6] -> {
+                return "A024"
+            }
+
+            else -> {}
+        }
+        return ""
+    }
+
+
+    //Check functions
+
     fun checkDayFinal(): Int {
 
         if (_uiState.value.day.isNotEmpty()) {
-            if (_uiState.value.stateSex == 0) {
-                return _uiState.value.day.toInt().minus(40)
+            return if (_uiState.value.stateSex == 0) {
+                _uiState.value.day.toInt().minus(40)
             } else {
-                return _uiState.value.day.toInt()
+                _uiState.value.day.toInt()
             }
         }
         return 0
 
     }
 
-
-    fun checkDestinations(navController: NavHostController, currentScreen: CfScreen) {
+    fun checkDestinations(
+        navController: NavHostController,
+        currentScreen: CfScreenUtils,
+        isBack: Boolean,
+        contentType: WindowsUtils,
+    ) {
         when (currentScreen) {
-            CfScreen.Start -> {
-                navController.navigate(CfScreen.Surname.name)
+            CfScreenUtils.Start -> {
+                navController.navigate(CfScreenUtils.Surname.name)
             }
 
-            CfScreen.Surname -> {
-                navController.navigate(CfScreen.Name.name)
+            CfScreenUtils.Surname -> {
+                if (isBack) {
+                    if (contentType == WindowsUtils.ScreenAndSteps) {
+                        setStateSteps(false, currentScreen, true)
+                    }
+                    navController.navigateUp()
+                } else {
+                    navController.navigate(CfScreenUtils.Name.name)
+                }
             }
 
-            CfScreen.Name -> {
-                navController.navigate(CfScreen.Date.name)
+            CfScreenUtils.Name -> {
+                if (isBack) {
+                    updateCF(0..2)
+                    setSurname("")
+                    if (contentType == WindowsUtils.ScreenAndSteps) {
+                        setStateSteps(false, currentScreen, true)
+                    }
+                    navController.navigateUp()
+                } else {
+                    navController.navigate(CfScreenUtils.Date.name)
+                }
             }
 
-            CfScreen.Date -> {
-                navController.navigate(CfScreen.Sex.name)
+            CfScreenUtils.Date -> {
+                if (isBack) {
+                    updateCF(3..5)
+                    setName("")
+                    if (contentType == WindowsUtils.ScreenAndSteps) {
+                        setStateSteps(false, currentScreen, true)
+                    }
+                    navController.navigateUp()
+
+                } else {
+                    navController.navigate(CfScreenUtils.Sex.name)
+
+                }
             }
 
-            CfScreen.Sex -> {
-                navController.navigate(CfScreen.City.name)
+            CfScreenUtils.Sex -> {
+
+                if (isBack) {
+                    updateCF(6..10)
+                    setMonth("")
+                    setYear("")
+                    setDay("")
+                    if (contentType == WindowsUtils.ScreenAndSteps) {
+                        setStateSteps(false, currentScreen, true)
+                    }
+                    navController.navigateUp()
+                } else {
+                    navController.navigate(CfScreenUtils.City.name)
+
+                }
+
             }
 
-            CfScreen.City -> {
-                navController.navigate(CfScreen.Recap.name)
+            CfScreenUtils.City -> {
+
+                if (isBack) {
+                    setSex("")
+                    if (contentType == WindowsUtils.ScreenAndSteps) {
+                        setStateSteps(false, currentScreen, true)
+                    }
+                    navController.navigateUp()
+                } else {
+                    navController.navigate(CfScreenUtils.Recap.name)
+                }
+
             }
 
-            CfScreen.Recap -> {
-                navController.navigate(CfScreen.Start.name)
+            CfScreenUtils.Recap -> {
+                if (isBack) {
+                    setCity("")
+                    updateCF(11..14)
+                    if (contentType == WindowsUtils.ScreenAndSteps) {
+                        setStateSteps(false, currentScreen, true)
+                    }
+                    navController.navigateUp()
+                } else {
+                    navController.navigate(CfScreenUtils.Start.name)
+                }
             }
 
         }
     }
 
+    fun checkWindowsSize(windowSize : WindowWidthSizeClass): WindowsUtils {
 
+        var contentType: WindowsUtils
+        when (windowSize) {
+            WindowWidthSizeClass.Compact -> {
+                contentType = WindowsUtils.Screen
+            }
+
+            WindowWidthSizeClass.Medium -> {
+                contentType = WindowsUtils.Screen
+            }
+
+            WindowWidthSizeClass.Expanded -> {
+                contentType = WindowsUtils.ScreenAndSteps
+            }
+
+            else -> {
+                contentType = WindowsUtils.Screen
+            }
+        }
+        return contentType
+    }
 }
