@@ -17,7 +17,7 @@ fun CityApp(
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
-    val contentType = viewModel.checkWindowsSize(windowSize)
+    val contentType = viewModel.checkWindowSize(windowSize)
 
     if (contentType == WindowsUtils.ScreenAndSteps) {
         Row() {

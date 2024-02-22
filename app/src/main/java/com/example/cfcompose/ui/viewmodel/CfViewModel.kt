@@ -593,9 +593,9 @@ class CfViewModel : ViewModel() {
         }
     }
 
-    fun checkWindowsSize(windowSize : WindowWidthSizeClass): WindowsUtils {
+    fun checkWindowSize(windowSize : WindowWidthSizeClass): WindowsUtils {
 
-        var contentType: WindowsUtils
+        val contentType: WindowsUtils
         when (windowSize) {
             WindowWidthSizeClass.Compact -> {
                 contentType = WindowsUtils.Screen

@@ -23,7 +23,7 @@ fun Screens(
 ) {
 
     val backStackEntry by navController.currentBackStackEntryAsState()
-    var currentScreen = CfScreenUtils.valueOf(
+    val currentScreen = CfScreenUtils.valueOf(
         backStackEntry?.destination?.route ?: CfScreenUtils.Start.name
     )
 
